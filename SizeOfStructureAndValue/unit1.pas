@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, simpleipc, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, Unit2;
+  ExtCtrls, Unit2, Windows;
 
 type
 
@@ -38,6 +38,7 @@ type
   public
     procedure _tprintf(s:String);
     procedure SendMessage_(s:String);
+    procedure TestLocalAllocation;
   end;
 
 var
@@ -101,6 +102,43 @@ begin
     IPCClient.Free;
   end;
 
+end;
+
+procedure TForm1.TestLocalAllocation;
+var
+  P: Pointer;
+  ByteCount: UINT;
+  PText: PChar;
+  Size_:SizeUInt;
+begin
+  ByteCount := 256;
+
+  { Allocate zero-initialized fixed memory }
+  P := LPTSTR(LocalAlloc(LPTR, ByteCount));
+
+  if P = nil then
+    raise Exception.Create('LocalAlloc failed');
+
+  Size_:=SizeOf(Pchar(P));
+  SendMessage_({$i %LINE%}+ ' Side of empty String structure: '+IntToStr(Size_));
+  Size_:=length(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String: '+IntToStr(Size_));
+
+  try
+    { Use the allocated memory block }
+    PText := P;
+    StrCopy(PText, 'Hello from LocalAlloc in Pascal!');
+    SendMessage_({$i %LINE%}+ ' PText: '+PText);
+
+    Size_:=SizeOf(PText);
+    SendMessage_({$i %LINE%}+ ' Side of String structure: '+IntToStr(Size_));
+    Size_:=length(Pchar(PText));
+    SendMessage_({$i %LINE%}+ ' Side of String: '+IntToStr(Size_));
+
+  finally
+    { Free the memory to prevent leaks }
+    LocalFree(HLOCAL(P));
+  end;
 end;
 
 procedure TForm1.OnIdle(Sender: TObject; var Done: boolean);
@@ -204,6 +242,9 @@ var
   T_A_Bool:A_Bool_;
   A_Bool_Ptr:A_Bool_Ptr_;
 begin
+  A_Bool:=nil;
+  T_A_Bool:=nil;
+
   SendMessage_('clear');
   Size_:=SizeOf(A_Bool);
   SendMessage_({$i %LINE%}+ ' Side of array of boolean structure: '+IntToStr(Size_));
@@ -228,6 +269,9 @@ var
   TestStr:String;
   TestStrPtr:Pchar;
   Size_:SizeUInt;
+
+  name_: array[1..100] of char;
+  description: ^string;
 begin
   SendMessage_('clear');
 
@@ -278,6 +322,61 @@ begin
 
   TestStr := '' + 12+1+3;
   SendMessage_({$i %LINE%}+ ' TestStr: '+TestStr);
+
+  try
+    TestLocalAllocation;
+  except
+    on E: Exception do
+    begin
+      SendMessage_({$i %LINE%}+ ' E.Message:'+ E.Message);
+      SendMessage_({$i %LINE%}+ ' E.ToString:'+ E.ToString);
+      //SendMessage_({$I %LINE%}+ ' SysErrorMessage:'+ SysErrorMessage(GetLastError));
+    end;
+  end;
+
+  name_:= ' A ';
+  new(description);
+  if not assigned(description) then
+    SendMessage_({$i %LINE%}+ ' Error - unable to allocate required memory')
+  else
+    description^ := name_;
+  Size_:=length(pchar(description^));
+  SendMessage_({$i %LINE%}+ ' length(description^): '+ Size_.ToString);
+  SendMessage_({$i %LINE%}+ ' Description: "'+ Pchar(description^) +'"');
+  dispose(description);
+  description:=nil;
+  SendMessage_({$i %LINE%}+ ' name_: "'+ name_ +'"');
+  Size_:=length(name_);
+  SendMessage_({$i %LINE%}+ ' length(name_): '+ Size_.ToString);
+
+  //description := getmem(200);
+  //if not assigned(description) then
+  //  SendMessage_({$i %LINE%}+ ' Error - unable to allocate required memory')
+  //else
+  //  FillChar(description^, 200, 0);
+  //Size_:=length(pchar(description^));
+  //SendMessage_({$i %LINE%}+ ' length(description^): '+ Size_.ToString);
+  //
+  //description := reallocmem(description, length(name_));
+  //Size_:=length(pchar(description^));
+  //SendMessage_({$i %LINE%}+ ' length(description^): '+ Size_.ToString);
+  //
+  //////Move(name_,description^, length(name_));
+  //////description^ := name_;
+  ////description^:=TestStr[1];
+  //freemem(description);
+  //
+  SetString(TestStr, PChar(@name_[1]), length(name_));
+  Size_:=length(TestStr);
+  SendMessage_({$i %LINE%}+ ' length(TestStr): '+ Size_.ToString);
+  SendMessage_({$i %LINE%}+ ' TestStr: "'+ TestStr +'"');
+
+  TestStr := PChar(@name_[1]);
+  Size_:=length(TestStr);
+  SendMessage_({$i %LINE%}+ ' length(TestStr): '+ Size_.ToString);
+  SendMessage_({$i %LINE%}+ ' TestStr: "'+ TestStr +'"');
+
+
 end;
 
 procedure TForm1.Button4Click(Sender: TObject);
@@ -285,7 +384,6 @@ var
    u,i,n:longword;
    base:byte;
    s:pchar;
-   g:string;
    f,r:single;
 begin
   base:=16;
