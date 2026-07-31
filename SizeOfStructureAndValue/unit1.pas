@@ -311,6 +311,7 @@ procedure TForm1.Button5Click(Sender: TObject);
 var
    F:single;
    s:string;
+   FS: TFormatSettings;
 begin
   F := 1.2;
   SendMessage_('clear');
@@ -318,6 +319,9 @@ begin
   Str(F:0:2, s);
   SendMessage_({$i %LINE%}+' F='+ s);
   SendMessage_({$i %LINE%}+' F='+ FormatFloat('#.##', F));
+  FS := DefaultFormatSettings;
+  FS.DecimalSeparator := '.';
+  SendMessage_({$i %LINE%}+' F='+ FormatFloat('0.00', F, FS));
   SendMessage_({$i %LINE%}+' Hex='+ IntToHex(pQword(@F)^,8));
 end;
 
