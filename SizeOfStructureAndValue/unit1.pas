@@ -16,6 +16,9 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
+    Button5: TButton;
+    Button6: TButton;
     CmdClear: TButton;
     Label1: TLabel;
     Memo1: TMemo;
@@ -24,6 +27,9 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
     procedure CmdClearClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -53,7 +59,7 @@ begin
     exit;
   end;
   Memo1.Append(s);
-  if Memo1.Lines.Count > 20 then Memo1.Lines.Delete(0);
+  if Memo1.Lines.Count > 34 then Memo1.Lines.Delete(0);
 end;
 
 procedure TForm1.SendMessage_(s:String);
@@ -268,6 +274,84 @@ begin
     SendMessage_({$i %LINE%}+ ' TestStrPtr^: "'+TestStrPtr^+'"');
     SendMessage_({$i %LINE%}+ ' TestStrPtr+1^: "'+(TestStrPtr+1)^+'"');
     SendMessage_({$i %LINE%}+ ' TestStrPtr+1^ Hex: '+IntToHex(Ord((TestStrPtr+1)^), 2));
+  end;
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+var
+   u,i,n:longword;
+   base:byte;
+   s:pchar;
+   g:string;
+   f,r:single;
+begin
+  base:=16;
+  SendMessage_('clear');
+  SendMessage_('Integers');
+  for i:=1 to 10 do
+  begin
+    n:=random(500);
+    s:=uintTobase(n,base);
+    u:=uintFromBase(s,base);
+    SendMessage_('num = '+n.ToString+'  base '+base.ToString+' = '+pchar(s)+'   return = '+u.ToString+'   compare '+n.ToString+'='+u.ToString );
+  end;
+
+  SendMessage_('Floats');
+  for i:=1 to 10 do
+  begin
+    r:=random* 500-random*500;
+    s:=floattobase(r,base);
+    f:=floatfrombase(s,base);
+    SendMessage_('num = '+r.ToString+'  base '+base.ToString+' = '+pchar(s)+'   return = '+FloatToStr(f)+'   compare '+FloatToStr(r)+'='+FloatToStr(f) );
+  end;
+
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+var
+   F:single;
+   s:string;
+begin
+  F := 1.2;
+  SendMessage_('clear');
+  SendMessage_({$i %LINE%}+' F='+ FloatToStr(F));
+  Str(F:0:2, s);
+  SendMessage_({$i %LINE%}+' F='+ s);
+  SendMessage_({$i %LINE%}+' Hex='+ IntToHex(pQword(@F)^,8));
+end;
+
+procedure TForm1.Button6Click(Sender: TObject);
+var
+  p: pointer;
+  adr: PtrUInt;
+  s:string;
+  Size_:SizeUInt;
+begin
+  s:=' A ';
+  p := @s;
+  adr := PtrToI64(p);
+
+  SendMessage_('clear');
+
+  SendMessage_({$i %LINE%}+' s= "'+s+'"');
+  SendMessage_({$i %LINE%}+' p^= "'+ Pchar(p^)+'"');
+  SendMessage_({$i %LINE%}+' adr^= "'+ Pchar(pQword(adr)^)+'"');
+
+  Size_:=SizeOf(s);
+  SendMessage_({$i %LINE%}+ ' Side of structure: '+IntToStr(Size_));
+  Size_:=SizeOf(Pchar(p));
+  SendMessage_({$i %LINE%}+ ' Side of structure by pointer: '+IntToStr(Size_));
+  Size_:=SizeOf(pQword(adr));
+  SendMessage_({$i %LINE%}+ ' Side of structure by pointer: '+IntToStr(Size_));
+
+  if length(s) > 0 then
+  begin
+    Size_:=length(s);
+    SendMessage_({$i %LINE%}+ ' Side of string: '+IntToStr(Size_));
+    Size_:=length(Pchar(p^));
+    SendMessage_({$i %LINE%}+ ' Side of string by pointer: '+IntToStr(Size_));
+    Size_:=length(Pchar(pQword(adr)^));
+    SendMessage_({$i %LINE%}+ ' Side of string by pointer: '+IntToStr(Size_));
   end;
 end;
 

@@ -1,22 +1,22 @@
 object Form1: TForm1
-  Left = 414
+  Left = 427
   Height = 378
-  Top = 193
-  Width = 480
+  Top = 129
+  Width = 561
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Size of Structure/Value'
   ClientHeight = 378
-  ClientWidth = 480
+  ClientWidth = 561
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poWorkAreaCenter
   LCLVersion = '3.4.0.0'
   object CmdClear: TButton
-    Left = 16
+    Left = 12
     Height = 28
     Top = 288
-    Width = 100
+    Width = 106
     Caption = 'Clear'
     TabOrder = 0
     OnClick = CmdClearClick
@@ -26,14 +26,14 @@ object Form1: TForm1
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Shape1
     AnchorSideTop.Side = asrCenter
-    Left = 45
+    Left = 37
     Height = 15
     Top = 16
     Width = 71
     Caption = '00: Disonnect'
   end
   object Shape1: TShape
-    Left = 20
+    Left = 12
     Height = 14
     Top = 16
     Width = 25
@@ -49,7 +49,7 @@ object Form1: TForm1
     Left = 136
     Height = 376
     Top = 0
-    Width = 344
+    Width = 425
     Anchors = [akTop, akRight, akBottom]
     BorderSpacing.Bottom = 2
     ScrollBars = ssAutoBoth
@@ -57,7 +57,7 @@ object Form1: TForm1
     WordWrap = False
   end
   object Button1: TButton
-    Left = 20
+    Left = 12
     Height = 28
     Top = 64
     Width = 106
@@ -66,7 +66,7 @@ object Form1: TForm1
     OnClick = Button1Click
   end
   object Button2: TButton
-    Left = 20
+    Left = 12
     Height = 28
     Top = 96
     Width = 106
@@ -75,12 +75,39 @@ object Form1: TForm1
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 20
+    Left = 12
     Height = 28
     Top = 128
     Width = 106
     Caption = 'String'
     TabOrder = 4
     OnClick = Button3Click
+  end
+  object Button4: TButton
+    Left = 12
+    Height = 28
+    Top = 184
+    Width = 106
+    Caption = 'Num - Ptr - Hex'
+    TabOrder = 5
+    OnClick = Button4Click
+  end
+  object Button5: TButton
+    Left = 12
+    Height = 28
+    Top = 212
+    Width = 106
+    Caption = 'Float - Ptr - Hex'
+    TabOrder = 6
+    OnClick = Button5Click
+  end
+  object Button6: TButton
+    Left = 12
+    Height = 28
+    Top = 240
+    Width = 106
+    Caption = 'Str - PtrUInt'
+    TabOrder = 7
+    OnClick = Button6Click
   end
 end
