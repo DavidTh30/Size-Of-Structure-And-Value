@@ -11,6 +11,7 @@ Kerword:
     - Str(F:0:2, s);
     - FormatFloat('#.##', F)
     - FormatFloat('0.00', F, FS)
+  - Automatic conversion (String + integer) to the correct type while parsing from left to right
   
 <img src="SizeOfStructureAndValue/SS01.png" width="400" height="400"> 
 
