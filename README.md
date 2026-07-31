@@ -10,6 +10,7 @@ Kerword:
     - FloatToStr(F)
     - Str(F:0:2, s);
     - FormatFloat('#.##', F)
+    - FormatFloat('0.00', F, FS)
   
 <img src="SizeOfStructureAndValue/SS01.png" width="400" height="400"> 
 
