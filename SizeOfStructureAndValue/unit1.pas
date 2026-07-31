@@ -317,6 +317,7 @@ begin
   SendMessage_({$i %LINE%}+' F='+ FloatToStr(F));
   Str(F:0:2, s);
   SendMessage_({$i %LINE%}+' F='+ s);
+  SendMessage_({$i %LINE%}+' F='+ FormatFloat('#.##', F));
   SendMessage_({$i %LINE%}+' Hex='+ IntToHex(pQword(@F)^,8));
 end;
 
