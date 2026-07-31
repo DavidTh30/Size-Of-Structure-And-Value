@@ -24,6 +24,8 @@ end;
 function floattobase(n:single;b:byte):pchar;
 function floatfrombase(s:string;b:byte):single;
 function PtrToI64(p:pointer):PtrUInt; inline;
+operator := (aArg: LongInt): String;
+operator + (const aLeft: String; aRight: LongInt): String;
 
 type
   A_Bool_Ptr_ = ^A_Bool_;
@@ -69,6 +71,16 @@ end;
 function PtrToI64(p:pointer):PtrUInt; inline;
 begin
   result := {%H-}PtrUInt(p);
+end;
+
+operator := (aArg: LongInt): String;
+begin
+  Result := IntToStr(aArg);
+end;
+
+operator + (const aLeft: String; aRight: LongInt): String;
+begin
+  Result := aLeft + ' ' + IntToStr(aRight);
 end;
 
 end.

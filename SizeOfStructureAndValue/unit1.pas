@@ -275,6 +275,9 @@ begin
     SendMessage_({$i %LINE%}+ ' TestStrPtr+1^: "'+(TestStrPtr+1)^+'"');
     SendMessage_({$i %LINE%}+ ' TestStrPtr+1^ Hex: '+IntToHex(Ord((TestStrPtr+1)^), 2));
   end;
+
+  TestStr := '' + 12+1+3;
+  SendMessage_({$i %LINE%}+ ' TestStr: '+TestStr);
 end;
 
 procedure TForm1.Button4Click(Sender: TObject);
