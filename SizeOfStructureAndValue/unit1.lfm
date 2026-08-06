@@ -8,14 +8,14 @@ object Form1: TForm1
   Caption = 'Size of Structure/Value'
   ClientHeight = 378
   ClientWidth = 561
+  Position = poWorkAreaCenter
+  LCLVersion = '4.4.0.0'
   OnClose = FormClose
   OnCreate = FormCreate
-  Position = poWorkAreaCenter
-  LCLVersion = '3.4.0.0'
   object CmdClear: TButton
     Left = 12
     Height = 28
-    Top = 288
+    Top = 336
     Width = 106
     Caption = 'Clear'
     TabOrder = 0
@@ -59,7 +59,7 @@ object Form1: TForm1
   object Button1: TButton
     Left = 12
     Height = 28
-    Top = 64
+    Top = 40
     Width = 106
     Caption = 'Basic'
     TabOrder = 2
@@ -68,7 +68,7 @@ object Form1: TForm1
   object Button2: TButton
     Left = 12
     Height = 28
-    Top = 96
+    Top = 72
     Width = 106
     Caption = 'Boolean'
     TabOrder = 3
@@ -77,7 +77,7 @@ object Form1: TForm1
   object Button3: TButton
     Left = 12
     Height = 28
-    Top = 128
+    Top = 104
     Width = 106
     Caption = 'String'
     TabOrder = 4
@@ -86,7 +86,7 @@ object Form1: TForm1
   object Button4: TButton
     Left = 12
     Height = 28
-    Top = 184
+    Top = 232
     Width = 106
     Caption = 'Num - Ptr - Hex'
     TabOrder = 5
@@ -95,7 +95,7 @@ object Form1: TForm1
   object Button5: TButton
     Left = 12
     Height = 28
-    Top = 212
+    Top = 260
     Width = 106
     Caption = 'Float - Ptr - Hex'
     TabOrder = 6
@@ -104,10 +104,28 @@ object Form1: TForm1
   object Button6: TButton
     Left = 12
     Height = 28
-    Top = 240
+    Top = 288
     Width = 106
     Caption = 'Str - PtrUInt'
     TabOrder = 7
     OnClick = Button6Click
+  end
+  object Button7: TButton
+    Left = 12
+    Height = 28
+    Top = 168
+    Width = 106
+    Caption = 'Untype Pointer'
+    TabOrder = 8
+    OnClick = Button7Click
+  end
+  object Button8: TButton
+    Left = 12
+    Height = 28
+    Top = 200
+    Width = 106
+    Caption = 'Assign Untype P..'
+    TabOrder = 9
+    OnClick = Button8Click
   end
 end

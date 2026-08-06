@@ -19,6 +19,8 @@ type
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
+    Button7: TButton;
+    Button8: TButton;
     CmdClear: TButton;
     Label1: TLabel;
     Memo1: TMemo;
@@ -30,6 +32,8 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
     procedure CmdClearClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -107,22 +111,54 @@ end;
 procedure TForm1.TestLocalAllocation;
 var
   P: Pointer;
+  MemHandle: HLOCAL;
   ByteCount: UINT;
   PText: PChar;
   Size_:SizeUInt;
 begin
+
   ByteCount := 256;
 
   { Allocate zero-initialized fixed memory }
-  P := LPTSTR(LocalAlloc(LPTR, ByteCount));
+  { Handle not Pointer }
+  MemHandle := LocalAlloc(LPTR, ByteCount);
+  { Can use MemHandle := LocalAlloc(LPTR, SizeOf(string)); }
+  { because Pointer to a string structure anyway }
+  P := LPTSTR(MemHandle);    //LPTSTR = Pchar
 
   if P = nil then
     raise Exception.Create('LocalAlloc failed');
 
+  Size_:=SizeOf(P);
+  SendMessage_({$i %LINE%}+ ' Side of pointer: '+IntToStr(Size_));
   Size_:=SizeOf(Pchar(P));
   SendMessage_({$i %LINE%}+ ' Side of empty String structure: '+IntToStr(Size_));
+  Size_:=length(Pchar(P));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
   Size_:=length(Pchar(P^));
-  SendMessage_({$i %LINE%}+ ' Side of empty String: '+IntToStr(Size_));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+
+  { Now P is pointer of structure string }
+  GetMem(Pchar(P^), 11);
+  Size_:=SizeOf(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty structure by pointer: '+IntToStr(Size_));
+  Size_:=length(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  ReAllocMem(Pchar(P^), 11);
+  Size_:=SizeOf(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  Size_:=length(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  FreeMem(Pchar(P^), 11);
+
+  { Renew P is pointer to structure string again }
+  Pchar(P^):=' A ';
+  Size_:=SizeOf(Pchar(P));
+  SendMessage_({$i %LINE%}+ ' Side of empty structure by pointer: '+IntToStr(Size_));
+  Size_:=length(Pchar(P));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  Size_:=length(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
 
   try
     { Use the allocated memory block }
@@ -138,7 +174,9 @@ begin
   finally
     { Free the memory to prevent leaks }
     LocalFree(HLOCAL(P));
+    P:=nil;
   end;
+
 end;
 
 procedure TForm1.OnIdle(Sender: TObject; var Done: boolean);
@@ -458,6 +496,87 @@ begin
     SendMessage_({$i %LINE%}+ ' Side of string by pointer: '+IntToStr(Size_));
     Size_:=length(Pchar(pQword(adr)^));
     SendMessage_({$i %LINE%}+ ' Side of string by pointer: '+IntToStr(Size_));
+  end;
+end;
+
+procedure TForm1.Button7Click(Sender: TObject);
+var
+  P:pointer;
+  Size_:SizeUInt;
+begin
+  SendMessage_('clear');
+
+  GetMem(P, 11);    // resize a dynamically allocated memory of structure
+  Size_:=SizeOf(P);
+  SendMessage_({$i %LINE%}+ ' GetMem(P, 11)');
+  SendMessage_({$i %LINE%}+ ' Side of structure pointer: '+IntToStr(Size_));
+  { can not do like this Size_:=length(P);  because this is untype pointer }
+  ReAllocMem(P, 200);
+  Size_:=SizeOf(P);
+  SendMessage_({$i %LINE%}+ ' ReAllocMem(P, 11)');
+  SendMessage_({$i %LINE%}+ ' Side of structure pointer: '+IntToStr(Size_));
+  FreeMem(P, 200);
+end;
+
+procedure TForm1.Button8Click(Sender: TObject);
+var
+  P:pointer;
+  Size_:SizeUInt;
+  MemHandle: HLOCAL;
+  ByteCount: UINT;
+  PText: Pchar;
+begin
+  SendMessage_('clear');
+
+  ByteCount := 256;
+
+  { Allocate zero-initialized fixed memory }
+  { Handle not Pointer }
+  MemHandle := LocalAlloc(LPTR, ByteCount);
+  { Can use MemHandle := LocalAlloc(LPTR, SizeOf(string)); }
+  { because Pointer to a string structure anyway }
+  P := LPTSTR(MemHandle);    //LPTSTR = Pchar
+
+  if P = nil then
+    raise Exception.Create('LocalAlloc failed');
+
+  Size_:=SizeOf(P);
+  SendMessage_({$i %LINE%}+ ' Side of pointer: '+IntToStr(Size_));
+  Size_:=SizeOf(Pchar(P));
+  SendMessage_({$i %LINE%}+ ' Side of empty String structure: '+IntToStr(Size_));
+  Size_:=length(Pchar(P));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  Size_:=length(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+
+  { Now P is pointer of structure string }
+  GetMem(Pchar(P^), 11);
+  Size_:=SizeOf(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty structure by pointer: '+IntToStr(Size_));
+  Size_:=length(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  ReAllocMem(Pchar(P^), 11);
+  Size_:=SizeOf(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  Size_:=length(Pchar(P^));
+  SendMessage_({$i %LINE%}+ ' Side of empty String by pointer: '+IntToStr(Size_));
+  FreeMem(Pchar(P^), 11);
+
+  try
+    { Use the allocated memory block }
+    PText := P;
+    StrCopy(PText, 'Hello from LocalAlloc in Pascal.......!');
+    SendMessage_({$i %LINE%}+ ' PText: '+PText);
+
+    Size_:=SizeOf(PText);
+    SendMessage_({$i %LINE%}+ ' Side of String structure: '+IntToStr(Size_));
+    Size_:=length(Pchar(PText));
+    SendMessage_({$i %LINE%}+ ' Side of String: '+IntToStr(Size_));
+
+  finally
+    { Free the memory to prevent leaks }
+    LocalFree(HLOCAL(P));
+    P:=nil;
   end;
 end;
 
