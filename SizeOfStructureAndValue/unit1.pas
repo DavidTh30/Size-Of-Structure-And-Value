@@ -551,6 +551,7 @@ begin
 
   { Now P is pointer of structure string }
   GetMem(Pchar(P^), 11);
+  ////FillChar(Pchar(P^), 11, ''); this is for rebuild Structure only
   Size_:=SizeOf(Pchar(P^));
   SendMessage_({$i %LINE%}+ ' Side of empty structure by pointer: '+IntToStr(Size_));
   Size_:=length(Pchar(P^));

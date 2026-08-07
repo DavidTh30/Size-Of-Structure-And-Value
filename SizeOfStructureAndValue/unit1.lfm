@@ -8,10 +8,10 @@ object Form1: TForm1
   Caption = 'Size of Structure/Value'
   ClientHeight = 378
   ClientWidth = 561
-  Position = poWorkAreaCenter
-  LCLVersion = '4.4.0.0'
   OnClose = FormClose
   OnCreate = FormCreate
+  Position = poWorkAreaCenter
+  LCLVersion = '3.4.0.0'
   object CmdClear: TButton
     Left = 12
     Height = 28
